@@ -1,0 +1,86 @@
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+
+function App() {
+  const [jobTitle, setJobTitle] = useState("");
+  const [location, setLocation] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    // safety, if there is no job title or location, the function just exits and does nothing
+    if (!jobTitle || !location) return;
+
+    setLoading(true);
+    setResult("");
+
+    // fetching the HTTP request
+    const response = await fetch("http://localhost:8000/research", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_title: jobTitle, location: location }),
+    });
+
+    // reading the response body and parsing it as json
+    const data = await response.json();
+
+    // the actual message
+    setResult(data.result);
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8 flex flex-col items-center">
+      {/* header div */}
+      <div className="w-full max-w-2xl">
+        <div className="mb-10 text-center">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Job Market Intelligence
+          </h1>
+          <p className="text-gray-400">
+            Powered by AI — research any job market in seconds
+          </p>
+        </div>
+
+        {/* input section */}
+        <div className="bg-gray-900 rounded-2xl p-6 shadow-lg mb-6 border border-gray-800">
+          <div className="flex flex-col gap-4">
+            <input
+              type="text"
+              placeholder="Job title (e.g. Frontend Developer)"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              className="bg-gray-800 text-white placeholder-gray-500 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Location (e.g. London)"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="bg-gray-800 text-white placeholder-gray-500 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleSearch}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors"
+            >
+              {loading ? "Researching..." : "Research Market"}
+            </button>
+          </div>
+        </div>
+
+        {/*results section */}
+        {result && (
+          <div className="bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-800">
+            <h2 className="text-xl font-semibold mb-4 !text-gray-400">Market Report</h2>
+            <div className="text-gray-300 leading-relaxed prose prose-invert max-w-none prose-headings:text-center prose-p:text-left prose-li:text-left">
+              <ReactMarkdown>{result}</ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
