@@ -16,7 +16,7 @@ function App() {
     setResult("");
 
     // fetching the HTTP request
-    const response = await fetch("https://job-market-agent-6pjp.onrender.com", {
+    const response = await fetch("https://job-market-agent-6pjp.onrender.com/research", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ job_title: jobTitle, location: location }),
