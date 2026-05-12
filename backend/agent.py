@@ -18,10 +18,9 @@ def run_agent(job_title, location):
         tools=[tavily_tool]
     )
     
-    # user telling agent to behave by this user given prompt
+    # invoke the agent with the user's goal and return the final response
     result = agent.invoke({
         "messages": [{"role": "user", "content": f"Research the job market for {job_title} in {location}. Find the most in-demand skills, common requirements, and salary range. Provide a structured summary."}]
     })
     
-    # final message
     return result["messages"][-1].content

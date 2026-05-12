@@ -18,7 +18,7 @@ class ResearchRequest(BaseModel):
     job_title: str
     location: str
     
-# gets the needed data for run_agent to work, after it finishes it returns an answer
+# gets the needed data for run_agent to work, after it finishes it streams the agent's response chunk by chunk
 @app.post("/research")
 def research(body: ResearchRequest):
     answer = run_agent(body.job_title, body.location)

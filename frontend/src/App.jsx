@@ -21,11 +21,15 @@ function App() {
       body: JSON.stringify({ job_title: jobTitle, location: location }),
     });
 
-    // reading the response body and parsing it as json
-    const data = await response.json();
+    const data = await response.json()
 
-    // the actual message
-    setResult(data.result);
+    // type out the result character by character to simulate streaming
+    const text = data.result
+    for (let i = 0; i < text.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 8))
+      setResult(text.slice(0, i + 1))
+    }
+
     setLoading(false);
   };
 
