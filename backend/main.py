@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from agent import run_agent
 
@@ -21,5 +21,8 @@ class ResearchRequest(BaseModel):
 # gets the needed data for run_agent to work, after it finishes it streams the agent's response chunk by chunk
 @app.post("/research")
 def research(body: ResearchRequest):
-    answer = run_agent(body.job_title, body.location)
-    return {"result": answer}
+    try:
+        answer = run_agent(body.job_title, body.location)
+        return {"result": answer}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

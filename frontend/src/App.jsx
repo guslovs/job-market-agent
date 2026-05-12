@@ -6,6 +6,7 @@ function App() {
   const [location, setLocation] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
     // safety, if there is no job title or location, the function just exits and does nothing
@@ -21,13 +22,21 @@ function App() {
       body: JSON.stringify({ job_title: jobTitle, location: location }),
     });
 
-    const data = await response.json()
+    if (!response.ok) {
+      const err = await response.json();
+      setError(err.detail);
+      setLoading(false);
+      return;
+    }
+    setError("");
+
+    const data = await response.json();
 
     // type out the result character by character to simulate streaming
-    const text = data.result
+    const text = data.result;
     for (let i = 0; i < text.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 8))
-      setResult(text.slice(0, i + 1))
+      await new Promise((resolve) => setTimeout(resolve, 8));
+      setResult(text.slice(0, i + 1));
     }
 
     setLoading(false);
@@ -45,6 +54,11 @@ function App() {
             Powered by AI — research any job market in seconds
           </p>
         </div>
+        {error && (
+          <div className="bg-red-900 text-red-300 px-4 py-3 rounded-xl mb-6">
+            {error}
+          </div>
+        )}
 
         {/* input section */}
         <div className="bg-gray-900 rounded-2xl p-6 shadow-lg mb-6 border border-gray-800">
@@ -76,7 +90,9 @@ function App() {
         {/*results section */}
         {result && (
           <div className="bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-800">
-            <h2 className="text-xl font-semibold mb-4 !text-gray-400">Market Report</h2>
+            <h2 className="text-xl font-semibold mb-4 !text-gray-400">
+              Market Report
+            </h2>
             <div className="text-gray-300 leading-relaxed prose prose-invert max-w-none prose-headings:text-center prose-p:text-left prose-li:text-left">
               <ReactMarkdown>{result}</ReactMarkdown>
             </div>
