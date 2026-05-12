@@ -9,7 +9,10 @@ app = FastAPI()
 # allowing React frontend to make requests to this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://job-market-agent-zeta.vercel.app"
+        ],
     allow_methods=["*"],
     allow_headers=["*"]
 )
